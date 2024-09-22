@@ -6,8 +6,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-
-import com.sun.tools.javac.Main;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import net.sourceforge.tess4j.Tesseract;
@@ -21,25 +19,6 @@ public class HelloServlet extends HttpServlet {
 
     public void init() {
         message = "Hello World!";
-        File tmpFolder = LoadLibs.extractTessResources("win32-x86-64");
-        System.setProperty("java.library.path", tmpFolder.getPath());
-        Tesseract tesseract = new Tesseract();
-        tesseract.setLanguage("deu");
-        tesseract.setOcrEngineMode(1);
-
-        Path dataDirectory = null;
-        try {
-            dataDirectory = Paths.get(ClassLoader.getSystemResource("data").toURI());
-            tesseract.setDatapath(dataDirectory.toString());
-
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/ocrexample.jpg")));
-            String result = tesseract.doOCR(image);
-            System.out.println(result);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

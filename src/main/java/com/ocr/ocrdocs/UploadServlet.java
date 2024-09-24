@@ -11,18 +11,16 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.LoadLibs;
 import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.nio.file.Path;
+import java.io.*;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet("/upload")
 @MultipartConfig
 public class UploadServlet extends HttpServlet {
 
+    private static final String UPLOAD_DIRECTORY = "upload";
     private Tesseract tesseract;
 
     public void init() {
@@ -40,26 +38,36 @@ public class UploadServlet extends HttpServlet {
         }
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
-        Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-        InputStream fileContent = filePart.getInputStream();
+        List<Part> fileParts = request.getParts().stream().filter(part -> "files".equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList());
 
-        String result = null;
-        String path = null;
-        try {
-            File file = new File("file.pdf");
-            FileUtils.copyInputStreamToFile(fileContent, file);
-            result = tesseract.doOCR(file);
-            path = file.getPath();
-        } catch (TesseractException e) {
-            throw new RuntimeException(e);
+        String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()){
+            uploadDir.mkdir();
         }
 
-        PrintWriter out = response.getWriter();
-        out.println("<html><head><meta charset=\"UTF-8\"></meta></head><body>");
-        out.println("<h1>" + result + "</h1>");
-        out.println("<h1>" + path + "</h1>");
-        out.println("</body></html>");
+        for (Part filePart : fileParts) {
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+            InputStream fileContent = filePart.getInputStream();
+            String result = null;
+            String path = null;
+            try {
+                File file = new File(fileName);
+                FileUtils.copyInputStreamToFile(fileContent, file);
+                result = tesseract.doOCR(file);
+                path = file.getPath();
+
+                filePart.write(uploadPath + File.separator + fileName);
+
+            } catch (TesseractException e) {
+                throw new RuntimeException(e);
+            }
+
+            PrintWriter out = response.getWriter();
+            out.println("<html><head><meta charset=\"UTF-8\"></meta></head><body>");
+            out.println("<h1>" + result + "</h1>");
+            out.println("<h1>" + path + "</h1>");
+            out.println("</body></html>");
+        }
     }
 }

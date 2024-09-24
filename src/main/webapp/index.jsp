@@ -2,15 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JSP - Hello World</title>
+  <title>Интеллектуальная система верификации и сортировки входящий документации</title>
 </head>
 <body>
-<h1><%= "Hello World!" %></h1>
+<h1><%= "Интеллектуальная система верификации и сортировки входящий документации"%></h1>
 <br/>
-<a href="hello-servlet">Hello Servlet</a>
+<h3><%= "Добавьте файлы"%></h3>
 <form action="upload" method="post" enctype="multipart/form-data">
-  <input type="text" name="description" />
-  <input type="file" name="file" />
+  <input type="file" name="files" multiple="true" />
   <input type="submit" />
 </form>
 </body>

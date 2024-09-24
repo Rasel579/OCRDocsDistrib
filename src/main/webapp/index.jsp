@@ -12,5 +12,6 @@
   <input type="file" name="files" multiple="true" />
   <input type="submit" />
 </form>
+<a href="docs">Посмотреть все документы</a>
 </body>
 </html>

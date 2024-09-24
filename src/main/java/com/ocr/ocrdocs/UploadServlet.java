@@ -1,5 +1,6 @@
 package com.ocr.ocrdocs;
 
+import com.ocr.ocrdocs.utils.DocsTypes;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,27 +48,46 @@ public class UploadServlet extends HttpServlet {
         }
 
         for (Part filePart : fileParts) {
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             InputStream fileContent = filePart.getInputStream();
             String result = null;
             String path = null;
+            DocsTypes doc = null;
             try {
                 File file = new File(fileName);
                 FileUtils.copyInputStreamToFile(fileContent, file);
                 result = tesseract.doOCR(file);
                 path = file.getPath();
+                doc = findType(result.split(" "));
+                String docPath = uploadPath + File.separator + doc.getPath();
+                File docPAthFile = new File(docPath);
+                if (!docPAthFile.exists()){
+                    docPAthFile.mkdir();
+                }
 
-                filePart.write(uploadPath + File.separator + fileName);
+                filePart.write(docPath + File.separator + doc.getDescription() + System.currentTimeMillis() + fileName );
 
             } catch (TesseractException e) {
                 throw new RuntimeException(e);
             }
 
+
+
             PrintWriter out = response.getWriter();
             out.println("<html><head><meta charset=\"UTF-8\"></meta></head><body>");
-            out.println("<h1>" + result + "</h1>");
+            out.println("<h1>" + doc.getDescription() + "</h1>");
             out.println("<h1>" + path + "</h1>");
             out.println("</body></html>");
         }
+    }
+
+    private  DocsTypes findType( String[] words ){
+        for ( String word: words){
+            if ( DocsTypes.findType(word) != DocsTypes.UNKNOWN){
+                return DocsTypes.findType(word);
+            }
+        }
+
+        return DocsTypes.UNKNOWN;
     }
 }

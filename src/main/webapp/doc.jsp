@@ -13,8 +13,8 @@
             <th>Название</th>
             <th>Url</th>
             <th>Тип</th>
-            <th>Фамилия сотрудника</th>
             <th>Имя сотрудника</th>
+            <th>Фамилия сотрудника</th>
         </tr>
         <c:forEach var="doc" items="${docs}" >
             <tr>

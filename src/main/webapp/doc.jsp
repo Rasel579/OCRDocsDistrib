@@ -10,13 +10,17 @@
 <h1>Документы</h1>
     <table>
         <tr>
-            <th>ID</th>
             <th>Название</th>
             <th>Url</th>
             <th>Тип</th>
+            <th>Фамилия сотрудника</th>
+            <th>Имя сотрудника</th>
         </tr>
         <c:forEach var="doc" items="${docs}" >
             <tr>
+                <td><c:out value="${doc.docTitle}"/></td>
+                <td><a href="file/<c:out value="${doc.docUrl}"/>">Скачать документ</a>></td>
+                <td><c:out value="${doc.docType}"/></td>
                 <td><c:out value="${doc.firstName}"/></td>
                 <td><c:out value="${doc.secondName}"/></td>
             </tr>

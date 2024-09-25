@@ -1,15 +1,13 @@
 package com.ocr.ocrdocs.data;
 
-public class DocsData {
+import java.io.Serializable;
+
+public class DocsData extends UserData implements Serializable {
 
     private long id;
     private String docTitle;
     private String docUrl;
-
     private String docType;
-    private String firstName;
-    private String secondName;
-
     public long getId() {
         return id;
     }
@@ -40,21 +38,5 @@ public class DocsData {
 
     public void setDocType(String docType) {
         this.docType = docType;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
     }
 }

@@ -6,4 +6,12 @@
     <listener>
         <listener-class>com.ocr.ocrdocs.web.ContextListener</listener-class>
     </listener>
+    <servlet>
+        <servlet-name>fileServlet</servlet-name>
+        <servlet-class>com.ocr.ocrdocs.FileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fileServlet</servlet-name>
+        <url-pattern>/file/*</url-pattern>
+    </servlet-mapping>
 </web-app>
